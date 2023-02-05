@@ -8,10 +8,10 @@ function initializeSignerKeypair(): web3.Keypair {
     if (!process.env.PRIVATE_KEY) {
         console.log('Creating .env file')
         const signer = web3.Keypair.generate()
-        fs.writeFileSync('.env',`PRIVATE_KEY=[${signer.secretKey.toString()}]`)
+        fs.writeFileSync('.env', `PRIVATE_KEY=[${signer.secretKey.toString()}]`)
         return signer
     }
-    
+
     const secret = JSON.parse(process.env.PRIVATE_KEY ?? "") as number[]
     const secretKey = Uint8Array.from(secret)
     const keypairFromSecretKey = web3.Keypair.fromSecretKey(secretKey)
@@ -36,7 +36,7 @@ const movieInstructionLayout = borsh.struct([
 
 async function sendTestMovieReview(signer: web3.Keypair, programId: web3.PublicKey, connection: web3.Connection) {
     let buffer = Buffer.alloc(1000)
-    const movieTitle = `Braveheart${Math.random()*1000000}`
+    const movieTitle = `Braveheart${Math.random() * 1000000}`
     movieInstructionLayout.encode(
         {
             variant: 0,
@@ -57,7 +57,7 @@ async function sendTestMovieReview(signer: web3.Keypair, programId: web3.PublicK
     console.log("PDA is:", pda.toBase58())
 
     const transaction = new web3.Transaction()
-    
+
     const instruction = new web3.TransactionInstruction({
         programId: programId,
         data: buffer,
@@ -87,11 +87,11 @@ async function sendTestMovieReview(signer: web3.Keypair, programId: web3.PublicK
 
 async function main() {
     const signer = initializeSignerKeypair()
-    
+
     const connection = new web3.Connection(web3.clusterApiUrl('devnet'))
     await airdropSolIfNeeded(signer, connection)
-    
-    const movieProgramId = new web3.PublicKey('FnHUUiX2jLSaGdt6GpgoJYKnUxzbPG5VmRPEDr1NEekm')
+
+    const movieProgramId = new web3.PublicKey('3LtZo41Fq3JJeUYY2XPUfH8FNJocSq4oMvkrdSLSikZ7')
     await sendTestMovieReview(signer, movieProgramId, connection)
 }
 
@@ -102,3 +102,5 @@ main().then(() => {
     console.log(error)
     process.exit(1)
 })
+
+
